@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 
 const Button = ({ text, onClick }) => {
   return (
-    <button onClick={() => onClick()}>
+    <button onClick={onClick}>
       {text}
     </button>
   )
