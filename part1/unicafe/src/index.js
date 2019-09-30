@@ -28,13 +28,13 @@ const Statistics = ({good, neutral, bad}) => {
   if(good || neutral || bad){
     return (
       <table>
-      <tbody>
-        <Statistic text="Good: " value={good} />
-        <Statistic text="Neutral: " value={neutral} />
-        <Statistic text="Bad: " value={bad} />
-        <Statistic text="Average: " value={average} />
-        <Statistic text="Positive: " value={toPercentage(positive)} />
-      </tbody>
+        <tbody>
+          <Statistic text="Good: " value={good} />
+          <Statistic text="Neutral: " value={neutral} />
+          <Statistic text="Bad: " value={bad} />
+          <Statistic text="Average: " value={average} />
+          <Statistic text="Positive: " value={toPercentage(positive)} />
+        </tbody>
       </table>
     )
   }

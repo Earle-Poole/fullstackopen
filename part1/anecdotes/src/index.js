@@ -1,13 +1,21 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Button = ({ onClick }) => {
+const Button = ({ onClick, text }) => {
   return (
-    <button onClick={onClick}>Randomize</button>
+    <button onClick={onClick}>{text}</button>
   )
 }
 
 const Anecdotes = ({ selected }) => {
+  let anecdoteArrOfObjs = []
+  for(let i = 0; i < anecdotes.length; i++){
+    anecdoteArrOfObjs[i] = {
+      text: anecdotes[i],
+      votes: 0,
+    }
+  }
+
   return (
     <div>
       {anecdotes[selected]}
@@ -15,15 +23,56 @@ const Anecdotes = ({ selected }) => {
   )
 }
 
+const Votes = ({ votes, selected }) => {
+  return (
+    <div>
+      has {votes[selected]} votes
+    </div>
+  )
+}
+
+const incrementVote = (selected, votes, setVotes) => {
+  const copy = {...votes}
+  copy[selected] += 1
+  setVotes(copy)
+}
+
 const randomNum = () => Math.floor(Math.random() * anecdotes.length)
+
+const initialVotesState = () => {
+  const initVoteObj = {}
+  for(let i = 0; i < anecdotes.length; i++) {
+    initVoteObj[i] = 0
+  }
+  return initVoteObj
+}
+
+const MostVotes = ({ votes }) => {
+  let copy = votes
+
+  copy =  Object.keys(copy).reduce((a,b) => copy[a] > copy[b] ? a : b)
+  
+  return (
+    <div>
+      <h1>Anecdote with most votes</h1>
+      <Anecdotes selected={copy[0]} />
+      <Votes votes={votes} selected={copy[0]} />
+    </div>
+  )
+}
 
 const App = () => {
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(initialVotesState)
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <Anecdotes selected={selected} />
-      <Button onClick={() => {setSelected(randomNum())}} />
+      <Votes votes={votes} selected={selected} />
+      <Button onClick={() => {incrementVote(selected, votes, setVotes)}} text="Vote" />
+      <Button onClick={() => {setSelected(randomNum())}} text="Next Anecdote" />
+      <MostVotes votes={votes} />
     </div>
   )
 }
