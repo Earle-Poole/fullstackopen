@@ -1,27 +1,19 @@
 import React, { useState } from 'react'
+import Inputs from './components/Inputs'
+import Numbers from './components/Numbers'
 
-const Inputs = ({ addName, newName, handleNameChange, newNumber, handleNumberChange }) => {
-  return(
-    <form onSubmit={addName}>
-    <div>
-      name: <input value={newName} onChange={handleNameChange} />
-    </div>
-    <div>
-      phone: <input value={newNumber} onChange={handleNumberChange} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-  )
-}
+
 
 const App = () => {
   const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-1234567' }
+    { name: 'Arto Hellas', number: '040-1234567' },
+    { name: 'Earle Poole', number: '123-456-7890' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ filter, setFilter ] = useState('')
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -29,6 +21,10 @@ const App = () => {
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value)
   }
 
   const addName = (event) => {
@@ -44,14 +40,7 @@ const App = () => {
     else setPersons(persons.concat(nameObject));setNewName('');setNewNumber('')
   }
 
-  const Numbers = () => {
-    const numbersArr = persons.map((person, i) => `${person.name} ${person.number}`)
-    return (
-      <div>
-        {numbersArr}
-      </div>
-    )
-  }
+
 
   return (
     <div>
@@ -62,9 +51,11 @@ const App = () => {
         handleNameChange={handleNameChange} 
         newNumber={newNumber} 
         handleNumberChange={handleNumberChange} 
+        filter={filter}
+        handleFilterChange={handleFilterChange}
       />
       <h2>Numbers</h2>
-      <Numbers />
+      <Numbers persons={persons} filter={filter}/>
     </div>
   )
 }
