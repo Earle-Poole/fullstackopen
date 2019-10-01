@@ -1,63 +1,72 @@
-import React, { useState } from 'react'
-import Inputs from './components/Inputs'
-import Numbers from './components/Numbers'
-
-
+import React, { useState, useEffect } from "react";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
+import Filter from "./components/Filter";
+import axios from "axios";
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-1234567' },
-    { name: 'Earle Poole', number: '123-456-7890' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]) 
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber ] = useState('')
-  const [ filter, setFilter ] = useState('')
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState("");
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons')
+      .then(res => {
+        console.log('res.data :', res.data);
+        setPersons(res.data);
+      })
+  }, [])
 
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
+  const handleNameChange = event => {
+    setNewName(event.target.value);
+  };
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
+  const handleNumberChange = event => {
+    setNewNumber(event.target.value);
+  };
 
-  const addName = (event) => {
-    event.preventDefault()
+  const handleFilterChange = event => {
+    setFilter(event.target.value);
+  };
+
+  const addName = event => {
+    event.preventDefault();
     const nameObject = {
       name: newName,
       number: newNumber
+    };
+
+    const duplicate = persons.find(person => person.name === nameObject.name);
+
+    if (duplicate) alert(`${nameObject.name} is already added to phonebook`);
+    else {
+      setPersons(persons.concat(nameObject));
+      setNewName("");
+      setNewNumber("");
     }
+  };
 
-    const duplicate = persons.find((person) => person.name === nameObject.name)
-
-    if (duplicate) alert(`${nameObject.name} is already added to phonebook`)
-    else setPersons(persons.concat(nameObject));setNewName('');setNewNumber('')
-  }
-
-
+  const filteredPersons = persons.filter(person =>
+    person.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Inputs 
-        addName={addName} 
-        newName={newName} 
-        handleNameChange={handleNameChange} 
-        newNumber={newNumber} 
-        handleNumberChange={handleNumberChange} 
-        filter={filter}
-        handleFilterChange={handleFilterChange}
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
+      <h2>add a new</h2>
+      <PersonForm
+        addName={addName}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Numbers persons={persons} filter={filter}/>
+      <Persons filteredPersons={filteredPersons} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
