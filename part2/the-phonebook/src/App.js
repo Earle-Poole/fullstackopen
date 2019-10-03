@@ -2,21 +2,24 @@ import React, { useState, useEffect } from "react";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
-import axios from "axios";
+import Message from "./components/Message";
+import personService from "./services/persons";
+
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageStatus, setMessageStatus] = useState();
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(res => {
-        console.log('res.data :', res.data);
-        setPersons(res.data);
-      })
-  }, [])
+    personService.getAll().then(res => {
+      setPersons(res);
+    });
+  }, []);
 
   const handleNameChange = event => {
     setNewName(event.target.value);
@@ -39,21 +42,72 @@ const App = () => {
 
     const duplicate = persons.find(person => person.name === nameObject.name);
 
-    if (duplicate) alert(`${nameObject.name} is already added to phonebook`);
-    else {
-      setPersons(persons.concat(nameObject));
-      setNewName("");
-      setNewNumber("");
+    if (duplicate) {
+      const prompt = window.confirm(
+        `${duplicate.name} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (prompt) updatePerson(duplicate.id, nameObject.number);
+    } else {
+      personService.create(nameObject).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+        setMessageStatus(true);
+        setMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setMessageStatus(null);
+          setMessage("");
+        }, 5000);
+      });
     }
   };
 
-  const filteredPersons = persons.filter(person =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const deletePerson = id => {
+    const person = persons.find(n => n.id === id);
+    const prompt = window.confirm(
+      `Are you sure you want to delete ${person.name}`
+    );
+
+    if (prompt)
+      personService
+        .deletePerson(id)
+        .then(() => setPersons(persons.filter(n => n.id !== id)));
+  };
+
+  const updatePerson = (id, number) => {
+    const person = persons.find(n => n.id === id);
+    const changedNumber = { ...person, number: number };
+
+    personService.update(id, changedNumber).then(returnedPerson => {
+      setPersons(
+        persons.map(person => (person.id !== id ? person : returnedPerson))
+      );
+      setMessageStatus(true);
+      setMessage(`Updated ${returnedPerson.name}'s number`);
+      setTimeout(() => {
+        setMessageStatus(null);
+        setMessage("");
+      }, 5000);
+    })
+    .catch(err => {
+      setMessageStatus(false);
+      setMessage(`Information of ${person.name} has already been removed from server`);
+      setTimeout(() => {
+        setMessageStatus(null);
+        setMessage("");
+      }, 5000);
+    });
+  };
+
+  const filteredPersons = persons.filter(person => {
+    return person.name.toLowerCase().includes(filter.toLowerCase());
+  });
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message messageStatus={messageStatus} message={message} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm
@@ -64,7 +118,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   );
 };
