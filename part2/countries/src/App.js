@@ -14,7 +14,7 @@ function App() {
     setSearchCountry(event.target.value)
   }
 
-  const handleShowButton = (country) => {
+  const handleShowButton = country => {
     setSearchCountry(country)
   }
 
@@ -27,12 +27,12 @@ function App() {
     axios
       .get(`http://api.weatherstack.com/current?access_key=b263e445ef1bbb1feb09f24e6e186369&query=${weather}`)
       .then(res => {
-        const current = res.data.current
+        const { temperature, weather_icons, wind_speed, wind_dir } = res.data.current 
         const weatherObj = {
-          temperature: current.temperature,
-          url: current.weather_icons[0],
-          windSpeed: current.wind_speed,
-          windDirection: current.wind_dir
+          temperature: temperature,
+          url: weather_icons[0],
+          windSpeed: wind_speed,
+          windDirection: wind_dir
         }
         setNewWeather(weatherObj)
       })

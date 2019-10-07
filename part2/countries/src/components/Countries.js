@@ -10,18 +10,18 @@ const Countries = ({filteredCountries, handleShowButton, handleWeather, newWeath
 
   if(filteredArr.length > 10) return <div>Too many matches, specify another filter</div>
   else if(filteredArr.length === 1) {
-    let c = filteredCountries[0]
-    let languages = c.languages.map((language, i) => <li key={i}>{language.name}</li>)
-    handleWeather(c.name)
+    let country = filteredCountries[0]
+    let languages = country.languages.map((language, i) => <li key={i}>{language.name}</li>)
+    handleWeather(country.name)
     return (
       <div>
-        <h1>{c.name}</h1>
-        <p>capital {c.capital}</p>
-        <p>population {c.population}</p>
+        <h1>{country.name}</h1>
+        <p>capital {country.capital}</p>
+        <p>population {country.population.toLocaleString('en')}</p>
         <h2>languages</h2>
         <ul>{languages}</ul>
-        <img src={c.flag} height="100" alt="" />
-        <Weather c={c} newWeather={newWeather}/>
+        <img src={country.flag} height="100" alt="" />
+        <Weather country={country} newWeather={newWeather}/>
       </div>
     )
   } else if(filteredArr.length === 0) return <div>There are no matches, specify another filter</div>
