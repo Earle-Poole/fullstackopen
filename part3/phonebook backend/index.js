@@ -1,6 +1,6 @@
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
+const app = express();
 
 app.use(bodyParser.json());
 
@@ -53,6 +53,16 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people</p><br/><p>${new Date()}</p>`)
+})
+app.delete("/api/persons/:id", (req, res) => {
+  const id = +req.params.id
+  const filteredPersons = persons.filter(person => person.id !== id)
+  const deletedPerson = persons.filter(person => person.id === id)
+  
+  if(deletedPerson.length > 0)
+  res.json(filteredPersons)
+  else
+  res.status(404).end()
 })
 
 const PORT = 3001;
