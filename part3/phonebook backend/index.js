@@ -1,62 +1,26 @@
+require('dotenv').config()
 const express = require("express")
+//parse incoming request bodies
 const bodyParser = require("body-parser")
+//http request logger middleware
 const morgan = require("morgan")
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person')
+
+let phoneNumber;
+let name;
+let persons;
 
 
-app.use(bodyParser.json())
 app.use(cors())
 app.use(express.static('build'))
+app.use(bodyParser.json())
 morgan.token('reqBody', function (req, res) {
+  // console.log('req.body :', req.body);
   return JSON.stringify(req.body)
 })
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :reqBody"))
-
-function requestLogger (req, res, next) {gi
-  console.log('Method:', req.method)
-  console.log('Path:', req.path)
-  console.log('Body:', req.body)
-  console.log('---')
-  next()
-}
-
-function unknownEndpoint (req, res) {
-  res.status(404).send({error: "unkown endpoint"})
-}
-
-let persons =  [
-    {
-      "name": "Steven Rigadoceus",
-      "number": "39-24-6423122",
-      "id": 2
-    },
-    {
-      "name": "Yehuda Bevy",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Earle Poole",
-      "number": "1813487132",
-      "id": 5
-    },
-    {
-      "name": "Margarita Spool",
-      "number": "213-69-6969",
-      "id": 6
-    },
-    {
-      "name": "Mona Surrevy",
-      "number": "123-123-123-123",
-      "id": 7
-    },
-    {
-      "name": "Friskina Pivera",
-      "number": "145-145-1458",
-      "id": 8
-    }
-  ]
 
 const generateID = () => {
   return Math.floor(Math.random() * 10000) 
@@ -64,18 +28,49 @@ const generateID = () => {
 
 
 
+let person = new Person({
+  name: name || null,
+  date: new Date(),
+  phoneNumber: phoneNumber || null
+})
+
+//query the database for list of persons, store in a variable
+Person.find({})
+  .then(people => {
+    persons = people
+  })
+
+//display list of existing persons
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({})
+    .then(people => {
+      res.json(people.map(person => person.toJSON()))
+    })
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  const id = +req.params.id
-  const person = persons.find(person => person.id === id)
-  
-  if(person)
-  res.json(person);
-  else
-  res.status(404).end()
+app.get("/api/persons/:id", (req, res, next) => {  
+  Person.findById(req.params.id)
+    .then(resPerson => {
+      if(resPerson)
+        res.json(resPerson)
+      else 
+        res.status(404).end()
+    })
+    .catch(err => {
+      if (req.params.id === "Dena"){
+        return res.send(
+          `<h1>WTF IS UP DENA PENA?!</h1>
+          <br/>
+          <img src='https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/48359353_10210453155724008_940856476459597824_n.jpg?_nc_cat=106&_nc_oc=AQkCfGLNRvL6jrGqwtVDXMU3buIdIZItxSOUeKtKz-IFT272RQvdeOuvR8scfkfuCQU&_nc_ht=scontent-atl3-1.xx&oh=85c83afe795f984e20c8d0920bdfe1ac&oe=5E2EB623' alt='' />`
+        )
+      }
+      else if (req.params.id === "Diane"){
+        res.send(`<iframe src="https://giphy.com/embed/hmZtValohxXby" width="480" height="357" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>`)
+      }
+      else {
+        next(err)
+      }
+    })
 })
 
 app.get("/info", (req, res) => {
@@ -83,40 +78,72 @@ app.get("/info", (req, res) => {
 })
 
 app.post("/api/persons", (req, res) => {
-  const newPerson = {...req.body, id: generateID()}
-  console.log('newPerson :', newPerson);
-  const dupePerson = () => persons.filter(person => person.name === newPerson.name).length === 0 ? false : true
-  console.log('dupePerson :', dupePerson());
-  const dupeID = () => persons.filter(person => person.id === newPerson.id).length === 0 ? false : true
-  console.log('dupeID :', dupeID());
-  if(!dupePerson() && !dupeID()) {
-    persons = persons.concat(newPerson)
-    res.json(persons)
-  } else {
-    if(dupePerson() && dupeID())
-    res.status(404).json({error: 'name and id must be unique'}).end()
-    else if (dupePerson() && !dupeID())
-    res.status(404).json({error: 'name must be unique'}).end()
-    else
-    res.status(404).json({error: 'id must be unique'}).end()
+  //if a name isn't provided then stop the post
+  if (req.body.name === '' || req.body.name === undefined){
+    console.log("name is missing")
+    res.status(404).json({error: "name is missing"})
   }
 
-  console.log('persons :', persons)
-  return { theBest: "Earle Poole" }
+  //creates newPerson from the posted request
+  const newPerson = req.body
+
+  //returns booleans if person's name matches an existing one
+  const dupePerson = persons.filter(person => person.name === newPerson.name).length === 0 ? false : true
+
+  if(!dupePerson) {
+    person.name = newPerson.name
+    person.phoneNumber = newPerson.phoneNumber
+    person.save()
+      .then(saveRes => {
+        console.log(`added ${person.name}!`)
+        res.json(saveRes)
+        person = new Person({
+          name: name || null,
+          date: new Date(),
+          phoneNumber: phoneNumber || null
+        })
+      })
+      .catch(err => console.log(`ran into err: ${err}`))
+
+  } else res.status(404).json({error: 'name must be unique'}).end()
 })
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = +req.params.id
-  const personsFiltered = persons.filter(person => person.id !== id)
-  const deletedPerson = persons.filter(person => person.id === id)
-  
-  if(deletedPerson.length > 0)
-  res.json(personsFiltered)
-  else
-  res.status(404).end()
+app.delete("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id
+  Person.findByIdAndRemove(id)
+    .then(() => res.status(204).end())
+    .catch(err => next(err))
 })
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id
+  const body = req.body
+  const person = {
+    name: body.name,
+    phoneNumber: body.phoneNumber,
+  }
+
+  Person.findByIdAndUpdate(id, person, {new: true})
+    .then(updatedPerson => {
+      res.json(updatedPerson)
+    })
+    .catch(err => next(err))
+})
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message)
+
+  if (err.name === 'CastError' && errorHandler.kind === 'ObjectID'){
+    return res.status(400).send({ err: 'malformatted id' })
+  }
+
+  next(err)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`)
 });

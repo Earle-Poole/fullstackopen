@@ -1,7 +1,2 @@
-POST http://localhost:3001/api/persons/
+GET http://localhost:3001/api/persons/5d9cea5c0d3e6047d08471fa
 content-type: application/json
-
-{
-  "name": "Diane Alvarado",
-  "number": "123-234-345"
-}

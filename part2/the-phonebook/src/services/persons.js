@@ -1,4 +1,5 @@
 import axios from 'axios'
+// axios({timeout: (15 * 1000)})
 const baseUrl = '/api/persons'
 
 const getAll = () => {
@@ -11,8 +12,8 @@ const create = newObject => {
   return request.then(res => res.data)
 }
 
-const deletePerson = (id, newObject) => {
-  const request = axios.delete(`${baseUrl}/${id}`, newObject)
+const deletePerson = id => {
+  const request = axios.delete(`${baseUrl}/${id}`)
   return request.then(res => res.data)
 }
 

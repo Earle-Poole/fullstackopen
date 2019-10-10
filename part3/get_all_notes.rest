@@ -1,7 +1,7 @@
-GET http://localhost:3001/api/persons
+POST https://infinite-shore-30530.herokuapp.com/api/persons/
 content-type: application/json
 
 {
-    "content": "Postman is a god tool for testing REST apis",
-    "important": true
+  "name": "Diane Alvarado",
+  "number": "123-234-345"
 }
