@@ -44,6 +44,7 @@ Person.find({})
 app.get("/api/persons", (req, res) => {
   Person.find({})
     .then(people => {
+      console.log("people", people)
       res.json(people.map(person => person.toJSON()))
     })
 });
@@ -77,7 +78,7 @@ app.get("/info", (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people</p><br/><p>${new Date()}</p>`)
 })
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   //if a name isn't provided then stop the post
   if (req.body.name === '' || req.body.name === undefined){
     console.log("name is missing")
@@ -103,7 +104,7 @@ app.post("/api/persons", (req, res) => {
           phoneNumber: phoneNumber || null
         })
       })
-      .catch(err => console.log(`ran into err: ${err}`))
+      .catch(err => next(err))
 
   } else res.status(404).json({error: 'name must be unique'}).end()
 })
@@ -135,6 +136,8 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === 'CastError' && errorHandler.kind === 'ObjectID'){
     return res.status(400).send({ err: 'malformatted id' })
+  } else if (err.name === 'ValidationError') {
+    return res.status(400).json({ err: err.message })
   }
 
   next(err)

@@ -70,7 +70,14 @@ const App = () => {
             setMessage("");
           }, 5000)
         })
-        .catch(err => console.log("did not get a returnedPerson, err:", err));
+        .catch(err => {
+          setMessageStatus(false)
+          setMessage(err.response.data.err)
+          setTimeout(() => {
+            setMessageStatus(null);
+            setMessage("");
+          }, 5000)
+        });
     }
   };
 

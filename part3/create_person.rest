@@ -1,2 +1,2 @@
-GET http://localhost:3001/api/persons/5d9cea5c0d3e6047d08471fa
+GET http://localhost:3001/api/persons/
 content-type: application/json
