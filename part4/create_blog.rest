@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkVhcmxlMTIzIiwiaWQiOiI1ZGFkYzM0ZjVhOWU2NDIxMThmNDc3OWQiLCJpYXQiOjE1NzE3NTg1ODR9.7djPvTTrMfYy3MTjEN2jf5g_3e_sEp4o0wMACNLg7Yg
+
+{
+  "title": "Ok, fine.. that's just fine",
+  "author": "Her",
+  "url": "www.665.com",
+  "likes": 1245
+}

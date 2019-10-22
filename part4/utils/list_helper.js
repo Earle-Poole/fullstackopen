@@ -1,7 +1,7 @@
 /* eslint-disable arrow-parens */
 const _ = require('lodash')
 
-const dummy = blogs => 1
+const dummy = () => 1
 
 const totalLikes = blogs => {
   const likes = blogs.map(blog => blog.likes)

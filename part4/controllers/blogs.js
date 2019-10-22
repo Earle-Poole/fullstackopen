@@ -1,28 +1,101 @@
+/* eslint-disable no-underscore-dangle */
 const blogsRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-// blogsRouter.get('/', ( req, res ) => {
-//   res.json({lol: "Hey!"})
-// })
+blogsRouter.get('/', async (req, res, next) => {
+  const blogs = await Blog.find({}).populate({ path: 'userid', model: 'User' })
 
-blogsRouter.get('/api/blogs', (req, res) => {
-  Blog
-    .find({})
-    .then((blogs) => {
-      res.json(blogs)
-    })
+  try {
+    res.json(blogs.map((blog) => blog.toJSON()))
+  } catch (err) { next(err) }
 })
 
-blogsRouter.post('/api/blogs', (req, res) => {
-  const blog = new Blog(req.body)
-  console.log('blog', blog)
+blogsRouter.get('/:id', async (req, res, next) => {
+  try {
+    const blog = await Blog.findById(req.params.id)
 
-  blog
-    .save()
-    .then((result) => {
-      res.status(201).json(result)
+    if (blog) {
+      res.json(blog.toJSON())
+    } else {
+      res.status(404).end()
+    }
+  } catch (err) { next(err) }
+})
+
+blogsRouter.post('/', async (req, res, next) => {
+  const { body } = req
+
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    if (!req.token || !decodedToken.id) {
+      return res.status(401).json({ err: 'token missing or invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      userid: decodedToken.id,
     })
-    .catch((err) => console.log('err', err))
+
+
+    const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+
+    if (blog.title === undefined || blog.url === undefined) {
+      res.status(400).json({ err: 'failure' })
+    } else {
+      const result = await blog.save()
+
+      res.status(200).json(result)
+    }
+  } catch (err) { next(err) }
+})
+
+blogsRouter.delete('/:id', async (req, res, next) => {
+  const { id } = req.params
+
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+    if (!req.token || !decodedToken.id) {
+      return res.status(401).json({ err: 'token missing or invalid' })
+    }
+
+    const blog = await Blog.findById(id)
+
+    console.log('blog.id', blog.userid)
+    console.log('decodedToken.id', decodedToken.id)
+
+    if (decodedToken.id.toString() !== blog.userid.toString()) {
+      return res.status(401).json({ err: 'token does not match user' })
+    }
+
+    await Blog.findByIdAndRemove(id)
+    res.status(204).end()
+  } catch (err) { next(err) }
+})
+
+blogsRouter.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { body } = req
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(id, blog, { new: true })
+
+    res.status(201).json(updatedBlog)
+  } catch (err) { next(err) }
 })
 
 module.exports = blogsRouter

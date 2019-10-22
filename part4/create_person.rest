@@ -1,9 +1,0 @@
-POST http://localhost:3003/api/blogs
-content-type: application/json
-
-{
-  "title": "A Journey in New Shoes",
-  "author": "J P Hudson",
-  "url": "www.google.com",
-  "likes": 16892857
-}
