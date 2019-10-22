@@ -69,9 +69,6 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 
     const blog = await Blog.findById(id)
 
-    console.log('blog.id', blog.userid)
-    console.log('decodedToken.id', decodedToken.id)
-
     if (decodedToken.id.toString() !== blog.userid.toString()) {
       return res.status(401).json({ err: 'token does not match user' })
     }
