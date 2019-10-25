@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
 const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
@@ -5,9 +6,9 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res, next) => {
-  const blogs = await Blog.find({}).populate({ path: 'userid', model: 'User' })
-
   try {
+    const blogs = await Blog.find({}).populate({ path: 'userid', model: 'User' })
+
     res.json(blogs.map((blog) => blog.toJSON()))
   } catch (err) { next(err) }
 })
@@ -25,9 +26,8 @@ blogsRouter.get('/:id', async (req, res, next) => {
 })
 
 blogsRouter.post('/', async (req, res, next) => {
-  const { body } = req
-
   try {
+    const { body } = req
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
     if (!req.token || !decodedToken.id) {
       return res.status(401).json({ err: 'token missing or invalid' })
@@ -41,7 +41,6 @@ blogsRouter.post('/', async (req, res, next) => {
       likes: body.likes,
       userid: decodedToken.id,
     })
-
 
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
@@ -87,6 +86,7 @@ blogsRouter.put('/:id', async (req, res, next) => {
       author: body.author,
       url: body.url,
       likes: body.likes,
+      userid: body.userid,
     }
 
     const updatedBlog = await Blog.findByIdAndUpdate(id, blog, { new: true })
