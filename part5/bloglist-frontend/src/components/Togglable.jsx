@@ -22,7 +22,7 @@ const Togglable = ({ children, buttonLabel }) => {
           {buttonLabel}
         </button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         {children}
         <button type='submit' onClick={toggleVisibility}>
           cancel

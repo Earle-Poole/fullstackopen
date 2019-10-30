@@ -10,40 +10,36 @@ import Blog from "./components/Blog"
 
 function App() {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [author, setAuthor] = useState("")
-  const [title, setTitle] = useState("")
-  const [url, setUrl] = useState("")
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState("")
   const [messageStatus, setMessageStatus] = useState()
 
   async function getBlogs() {
     const resBlogs = await blogsService.getAll()
+    // console.log('resBlogs', resBlogs)
     setBlogs(resBlogs)
   }
-
-  const loggedUser = window.localStorage.getItem("loggedBlogAppUser")
 
   useEffect(() => {
     getBlogs()
   }, [])
 
   useEffect(() => {
+    const loggedUser = window.localStorage.getItem("loggedBlogAppUser")
+
     if (loggedUser) {
       const loggedUserJson = JSON.parse(loggedUser)
       setUser(loggedUserJson)
     }
-  }, [loggedUser])
+  }, [])
 
-  const handleLogin = async e => {
+  const handleLogin = async (e, usernameField, passwordField) => {
     e.preventDefault()
 
     try {
       const loggedInUser = await loginService.login({
-        username,
-        password,
+        username: usernameField.value,
+        password: passwordField.value,
       })
 
       window.localStorage.setItem(
@@ -51,8 +47,6 @@ function App() {
         JSON.stringify(loggedInUser)
       )
       setUser(loggedInUser)
-      setUsername("")
-      setPassword("")
       setMessageStatus(true)
       setMessage("Login successful")
       setTimeout(() => {
@@ -78,8 +72,6 @@ function App() {
     try {
       window.localStorage.removeItem("loggedBlogAppUser")
       setUser(null)
-      setUsername("")
-      setPassword("")
       setMessageStatus(true)
       setMessage("Logout successful")
       setTimeout(() => {
@@ -87,18 +79,18 @@ function App() {
         setMessage("")
       }, 5000)
     } catch (err) {
-      throw err("there was an error: ", err)
+      throw new Error(`there was an error: ${err}`)
     }
   }
 
-  const handleNewBlog = async e => {
+  const handleNewBlog = async ( e, titleField, authorField, urlField )  => {
     e.preventDefault()
 
     try {
       const newBlog = {
-        title,
-        author,
-        url,
+        title: titleField.value,
+        author: authorField.value,
+        url: urlField.value,
         likes: Math.floor(Math.random() * 100000),
       }
 
@@ -106,9 +98,6 @@ function App() {
 
       const blog = await blogsService.createBlog(newBlog)
 
-      setTitle("")
-      setAuthor("")
-      setUrl("")
       setMessageStatus(true)
       setMessage(`Added ${blog.title}`)
       setTimeout(() => {
@@ -138,10 +127,6 @@ function App() {
           <Message messageStatus={messageStatus} message={message} />
           <Togglable buttonLabel='show login'>
             <LoginForm
-              username={username}
-              password={password}
-              setUsername={setUsername}
-              setPassword={setPassword}
               handleLogin={handleLogin}
             />
           </Togglable>
@@ -158,12 +143,6 @@ function App() {
               <h1>create new</h1>
               <NewBlogForm
                 handleNewBlog={handleNewBlog}
-                title={title}
-                author={author}
-                url={url}
-                setTitle={setTitle}
-                setAuthor={setAuthor}
-                setUrl={setUrl}
               />
             </Togglable>
             {blogs
@@ -173,7 +152,6 @@ function App() {
                   key={blog.id}
                   blog={blog}
                   user={user}
-                  loggedUser={loggedUser}
                   deleteBlog={blogsService.deleteBlog}
                   getBlogs={getBlogs}
                   incrementLikes={blogsService.incrementLikes}

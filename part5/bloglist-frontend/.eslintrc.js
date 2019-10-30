@@ -20,7 +20,7 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "react", "jest"
+        "react", "jest", "react-hooks"
     ],
     "rules": {
       "semi": 0,
@@ -35,7 +35,8 @@ module.exports = {
         "error", "always"
       ],
       "no-trailing-spaces": "error",
-      "eqeqeq": "error"
+      "eqeqeq": "error",
+      "react-hooks/rules-of-hooks": "error"
     },
     "settings": {
       "react": {

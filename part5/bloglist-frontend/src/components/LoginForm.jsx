@@ -1,42 +1,44 @@
 import React from "react"
 import PropTypes from "prop-types"
+import { useField } from "../hooks"
 
 const LoginForm = ({
-  username,
-  password,
-  setUsername,
-  setPassword,
   handleLogin,
-}) => (
-  <form onSubmit={handleLogin}>
-    <div>
-      username
-      <input
-        type='text'
-        value={username}
-        name='Username'
-        onChange={({ target }) => setUsername(target.value)}
-      />
-    </div>
-    <div>
-      password
-      <input
-        type='password'
-        value={password}
-        name='Password'
-        onChange={({ target }) => setPassword(target.value)}
-      />
-    </div>
-    <button type='submit'>login</button>
-  </form>
-)
+}) => {
+  const resetScrubber = (field) => {
+    // eslint-disable-next-line no-unused-vars
+    const { reset, ...noReset } = field
+    return noReset
+  }
+  const usernameField = useField("text", "Username")
+  const passwordField = useField("password", "Password")
+
+  return (
+    <form
+      onSubmit={e => {
+        handleLogin(e, usernameField, passwordField)
+        usernameField.reset()
+        passwordField.reset()
+      }}>
+      <div>
+        username
+        <input {...resetScrubber(usernameField)} />
+      </div>
+      <div>
+        password
+        <input {...resetScrubber(passwordField)} />
+      </div>
+      <button type='submit'>login</button>
+    </form>
+  )
+}
 
 LoginForm.propTypes = {
-  username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired,
+  // username: PropTypes.string.isRequired,
+  // password: PropTypes.string.isRequired,
   handleLogin: PropTypes.func.isRequired,
-  setUsername: PropTypes.func.isRequired,
-  setPassword: PropTypes.func.isRequired,
+  // setUsername: PropTypes.func.isRequired,
+  // setPassword: PropTypes.func.isRequired,
 }
 
 export default LoginForm

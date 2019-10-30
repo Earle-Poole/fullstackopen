@@ -7,7 +7,6 @@ const Blog = ({
   blog,
   user,
   getBlogs,
-  loggedUser,
   deleteBlog,
   incrementLikes,
 }) => {
@@ -38,22 +37,23 @@ const Blog = ({
   }
 
   const loggedUserMatch = {
-    display: JSON.parse(loggedUser).name === blog.userid.name ? "" : "none",
+    display: user.name === blog.userid.name ? "" : "none",
+    // display: "",
   }
 
   return (
     <div className='blog'>
-      <span
+      <div
         onClick={toggleExpanded}
         onKeyPress={null}
         role='button'
         tabIndex='0'>
-        {blog.title} {blog.author}
-      </span>
-      <div style={showWhenExpanded}>
+        <span className="title">{blog.title}</span> <span className="author">{blog.author}</span>
+      </div>
+      <div style={showWhenExpanded} className="details">
         <a href={`http://${blog.url}`}>{blog.url}</a>
         <br />
-        {blog.likes}
+        <span className="likes">{blog.likes}</span>
         <button type='button' onClick={handleIncrementLikes}>
           likes
         </button>
@@ -72,3 +72,4 @@ const Blog = ({
 }
 
 export default Blog
+
