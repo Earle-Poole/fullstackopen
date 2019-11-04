@@ -2,7 +2,6 @@ import React from 'react'
 import { addedAnecdote } from '../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
 import ConnectedFilter from './Filter'
-import anecdoteService from '../services/anecdotes'
 
 const AnecdoteForm = props => {
   const addAnecdote = async e => {
@@ -13,8 +12,7 @@ const AnecdoteForm = props => {
     }
     e.target.anecdote.value = ''
 
-    const newNote = await anecdoteService.createNew(content)
-    props.addedAnecdote(newNote)
+    props.addedAnecdote(content)
   }
 
   return (

@@ -8,14 +8,22 @@ const initialNotification = {
   }
 }
 
-export const displayNotification = message => {
+export const setNotification = (message, timeout) => {
+  return async dispatch => {
+    const seconds = timeout * 1000
+    dispatch(displayNotification(message))
+    setTimeout(() => dispatch(hideNotification()), seconds)
+  }
+}
+
+const displayNotification = message => {
   return { 
     type: 'SHOW_NOTIFICATION',
     message: message,
    }
 }
 
-export const hideNotification = () => {
+const hideNotification = () => {
   return {
     type: 'HIDE_NOTIFICATION'
   }
