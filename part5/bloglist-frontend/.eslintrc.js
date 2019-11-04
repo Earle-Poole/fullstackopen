@@ -35,8 +35,7 @@ module.exports = {
         "error", "always"
       ],
       "no-trailing-spaces": "error",
-      "eqeqeq": "error",
-      "react-hooks/rules-of-hooks": "error"
+      "eqeqeq": "error"
     },
     "settings": {
       "react": {
