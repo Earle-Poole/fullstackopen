@@ -5,14 +5,16 @@ import { connect } from 'react-redux'
 //Disconnected components
 import About from './components/About'
 import Footer from './components/Footer'
-import Menu from './components/Menu'
 //Reducers
 import { initializeBlogs } from './reducers/blogReducer'
 //Connected components
 import ConnectedBlogList from './components/BlogList'
+import ConnectedLogin from './components/Login'
+import ConnectedMenu from './components/Menu'
 import ConnectedNewBlogFormfrom from './components/NewBlogForm'
 import ConnectedNotification from './components/Notification'
 import ConnectedUserList from './components/UserList'
+import ConnectedUser from './components/User'
 
 const App = props => {
   useEffect(() => {
@@ -22,7 +24,7 @@ const App = props => {
   return (
     <div>
       <Router>
-        <Menu />
+        <ConnectedMenu />
         <ConnectedNotification />
         <Route exact path="/" render={() =>
           <ConnectedBlogList />
@@ -36,10 +38,21 @@ const App = props => {
         <Route exact path="/users" render={() =>
           <ConnectedUserList />
         } />
+        <Route path="/users/:id" render={({ match }) => 
+          <ConnectedUser userID={+match.params.id} />
+        } />
+        <Route exact path="/login" component={ConnectedLogin} />
         <Footer />
       </Router>
     </div>
   )
 }
 
-export default connect(null, { initializeBlogs })(App)
+const mapStateToProps = state => {
+  console.log("state", state)
+  return {
+    userToLogout: state.loggedUser
+  }
+}
+
+export default connect(mapStateToProps, { initializeBlogs })(App)

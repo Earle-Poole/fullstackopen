@@ -3,7 +3,7 @@ import { generateID } from "../utils/tools"
 
 const initialBlogs = [
   {
-    author: "Earle Poole",
+    username: "Earle Poole",
     blogsList: [
       {
         content: "Nullam consectetur suscipit tortor, feugiat.",
@@ -15,7 +15,7 @@ const initialBlogs = [
     id: generateID(),
   },
   {
-    author: "Not Earle Poole",
+    username: "Not Earle Poole",
     blogsList: [
       { content: "Curabitur euismod accumsan nibh, eu.", id: generateID() },
       { content: "Donec tincidunt nibh in venenatis.", id: generateID() },
@@ -26,15 +26,18 @@ const initialBlogs = [
   },
 ]
 
+initialBlogs.map(user => {
+  user.blogsList.map(blog => {
+    blog.userID = user.id
+    return null
+  })
+  return null
+})
+
 export const initializeBlogs = () => {
   return async dispatch => {
-    // const blogs = await blogsService.getAll()
-
-    // console.log("blogs", blogs)
-
     dispatch({
       type: "INIT_BLOGS",
-      // data: blogs
     })
   }
 }
@@ -67,22 +70,22 @@ const blogReducer = (state = initialBlogs, action) => {
       return state
     case "NEW_BLOG":
       const matchingUser = newState.findIndex(user => {
-        return user.author === action.blog.author
+        return user.username === action.blog.username
       })
 
       if (matchingUser === -1) {
-        const newAuthorAndBlog = {
-          author: action.blog.author,
+        const newUserAndBlog = {
+          username: action.blog.username,
           blogsList: [{ content: action.blog.content, id: generateID() }],
           id: generateID(),
         }
 
-        return [...newState, newAuthorAndBlog]
+        return [...newState, newUserAndBlog]
       }
 
       const newBlog = {
         content: action.blog.blogContent,
-        id: action.blog.id
+        id: action.blog.id,
       }
 
       newState[matchingUser].blogsList.push(newBlog)

@@ -1,9 +1,10 @@
 import React from 'react'
 
-const Blog = ({content}) => {
+const Blog = props => {
+  console.log("props", props)
   return (
     <div>
-      <span>{content}</span>
+      <span>{props.user.content}</span>
     </div>
   )
 }

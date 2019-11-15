@@ -7,7 +7,7 @@ import { setNotification } from '../reducers/notificationReducer'
 import Blog from './Blog'
 
 const BlogList = props => { 
-  const users = props.blogs
+  const users = props.blogsByUser
   const fullBlogList = []
 
   users.map(user => user.blogsList.map(blog => fullBlogList.push(blog)))
@@ -20,7 +20,7 @@ const BlogList = props => {
     <div style={blogListPadding}>
       {fullBlogList.map(user => {
         return (
-          <Blog content={user.content} key={user.id} />
+          <Blog user={user} key={user.id} />
         )
       })}
     </div>
@@ -29,7 +29,7 @@ const BlogList = props => {
 
 const mapStateToProps = state => {
   return { 
-    blogs: state.blogs,
+    blogsByUser: state.blogsByUser,
   }
 }
 

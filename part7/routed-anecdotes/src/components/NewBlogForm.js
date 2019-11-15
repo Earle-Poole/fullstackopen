@@ -17,13 +17,17 @@ const NewBlogFormNoHistory = (props) => {
       author: e.target.author.value,
       id: generateID()
     }
-    setNotification(`new blog "${blog.content}" by ${blog.author}`)
+    props.setNotification(`new blog "${blog.content}" by ${blog.author}`, 10)
     props.newBlog(blog)
     props.history.push('/')
   }
 
+  const newBlogPadding = {
+    paddingBottom: '20px'
+  }
+
   return (
-    <div>
+    <div style={newBlogPadding}>
       <h2>create a new blog</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -42,7 +46,8 @@ const NewBlogFormNoHistory = (props) => {
 
 const NewBlogForm = withRouter(NewBlogFormNoHistory)
 const mapDispatchToProps = {
-  newBlog
+  newBlog,
+  setNotification
 }
 
 const ConnectedNewBlogForm = connect(null, mapDispatchToProps)(NewBlogForm)
