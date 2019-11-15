@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 //Reducers
 import { setNotification } from '../reducers/notificationReducer'
 //Disconnected components
-import Blog from './Blog'
+import BlogLink from './BlogLink'
 
 const BlogList = props => { 
   const users = props.blogsByUser
@@ -20,7 +20,7 @@ const BlogList = props => {
     <div style={blogListPadding}>
       {fullBlogList.map(user => {
         return (
-          <Blog user={user} key={user.id} />
+          <BlogLink user={user} key={user.id} />
         )
       })}
     </div>

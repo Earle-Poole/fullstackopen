@@ -9,6 +9,7 @@ import Footer from './components/Footer'
 import { initializeBlogs } from './reducers/blogReducer'
 //Connected components
 import ConnectedBlogList from './components/BlogList'
+import ConnectedBlog from './components/Blog'
 import ConnectedLogin from './components/Login'
 import ConnectedMenu from './components/Menu'
 import ConnectedNewBlogFormfrom from './components/NewBlogForm'
@@ -28,6 +29,9 @@ const App = props => {
         <ConnectedNotification />
         <Route exact path="/" render={() =>
           <ConnectedBlogList />
+        } />
+        <Route path="/blogs/:id" render={({match}) => 
+          <ConnectedBlog blogID={+match.params.id} />
         } />
         <Route exact path="/about" render={() => 
           <About />
