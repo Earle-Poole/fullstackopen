@@ -1,15 +1,15 @@
 //React imports
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
+import { createStore, combineReducers, applyMiddleware } from "redux"
+import thunk from "redux-thunk"
 //Reducers
-import blogReducer from './reducers/blogReducer'
-import notificationReducer from './reducers/notificationReducer'
-import userReducer from './reducers/userReducer'
+import blogReducer from "./reducers/blogReducer"
+import notificationReducer from "./reducers/notificationReducer"
+import userReducer from "./reducers/userReducer"
 
 const reducer = combineReducers({
-  blogsByUser: blogReducer,
-  notification: notificationReducer,
-  loggedUser: userReducer
+	blogsByUser: blogReducer,
+	notification: notificationReducer,
+	loggedUser: userReducer,
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))
