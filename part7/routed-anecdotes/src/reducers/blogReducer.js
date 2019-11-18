@@ -1,54 +1,32 @@
 import blogsService from "../services/blogs"
 import { generateID } from "../utils/tools"
 
-const initialBlogs = [
-  {
-    username: "Earle Poole",
-    blogsList: [
-      {
-        content: "Nullam consectetur suscipit tortor, feugiat.",
-        id: generateID(),
-      },
-      { content: "Vestibulum volutpat nisl et nibh.", id: generateID() },
-      { content: "Donec placerat ex sit amet.", id: generateID() },
-    ],
-    id: generateID(),
-  },
-  {
-    username: "Not Earle Poole",
-    blogsList: [
-      { content: "Curabitur euismod accumsan nibh, eu.", id: generateID() },
-      { content: "Donec tincidunt nibh in venenatis.", id: generateID() },
-      { content: "Interdum et malesuada fames ac.", id: generateID() },
-      { content: "Cras laoreet, diam in finibus.", id: generateID() },
-    ],
-    id: generateID(),
-  },
-]
-
-initialBlogs.map(user => {
-  user.blogsList.map(blog => {
-    blog.userID = user.id
-    return null
-  })
-  return null
-})
-
 export const initializeBlogs = () => {
   return async dispatch => {
+    const initialBlogs = await blogsService.getAll()
+
+    initialBlogs.map(user => {
+      user.blogsList.map(blog => {
+        blog.userID = user.id
+        return null
+      })
+      return null
+    })
+
     dispatch({
       type: "INIT_BLOGS",
+      data: initialBlogs
     })
   }
 }
 
-export const voteBlog = async id => {
+export const voteBlog = IDObj => {
   return async dispatch => {
-    const blog = await blogsService.voteByBlogID(id)
+    // const blog = await blogsService.voteByBlogID(id)
 
     dispatch({
       type: "VOTE_BLOG",
-      data: blog,
+      IDObj: IDObj,
     })
   }
 }
@@ -62,12 +40,13 @@ export const newBlog = blog => {
   }
 }
 
-const blogReducer = (state = initialBlogs, action) => {
+const blogReducer = (state = [], action) => {
   let newState = [...state]
 
   switch (action.type) {
     case "INIT_BLOGS":
-      return state
+      newState = action.data
+      return newState
     case "NEW_BLOG":
       const matchingUser = newState.findIndex(user => {
         return user.username === action.blog.username
@@ -93,11 +72,17 @@ const blogReducer = (state = initialBlogs, action) => {
       return newState
 
     case "VOTE_BLOG":
-      const votedBlog = newState.findIndex(
-        blog => blog.id === action.data.blog.id
-      )
+      console.log("newState in VOTE_BLOG", newState)
+      console.log("action in VOTE_BLOG", action.IDObj)
+      const votedUser = newState.findIndex(user => {
+        return user.id === action.IDObj.userID
+      })
 
-      newState[votedBlog].votes += 1
+      const votedBlog = newState[votedUser].blogsList.findIndex(blog => {
+        return blog.id === action.IDObj.blogID
+      })
+
+      newState[votedUser].blogsList[votedBlog].votes += 1
 
       return newState
     default:

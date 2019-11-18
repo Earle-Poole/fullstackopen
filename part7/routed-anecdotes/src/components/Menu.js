@@ -14,21 +14,27 @@ const Menu = props => {
   const menuPadding = {
     paddingBottom: 15
   }
-  const logUserOut = () => {
+  const logoutCurrentUser = () => {
     props.logoutUser()
     props.setNotification('you have been logged out', 5)
   }
+  console.log("props.loggedUser", props.loggedUser)
   return (
     <div style={menuPadding}>
       <h1>blogs</h1>
+      {
+        Object.keys(props.loggedUser).length === 1 ?
+          <div style={menuPadding}>logged in as {props.loggedUser.username}</div> :
+          null
+      }
       <Link to="/" style={linkPadding}>blogs</Link>
       <Link to="/users" style={linkPadding}>users</Link>
-      <Link to="/create" style={linkPadding}>create new</Link>
+      <Link to="/create" style={linkPadding}>create blog</Link>
       <Link to="/about" style={linkPadding}>about</Link>
       {
         Object.keys(props.loggedUser).length === 0 ? 
           <Link to="/login" style={linkPadding}>login</Link> :
-          <Link to="/" style={linkPadding} onClick={logUserOut}>logout</Link>
+          <Link to="/" style={linkPadding} onClick={logoutCurrentUser}>logout</Link>
       }
     </div>
   )

@@ -1,4 +1,4 @@
-import { generateID } from "../utils/tools"
+// import { generateID } from "../utils/tools"
 
 export const loginUser = username => {
 	return async dispatch => {
@@ -25,7 +25,7 @@ const userReducer = (state = {}, action) => {
 			newState = { username: action.data }
 			return newState
 		case "LOGOUT":
-			newState = null
+			newState = {}
 			return newState
 		default:
 			return state

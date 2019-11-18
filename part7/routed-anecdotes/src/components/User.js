@@ -1,6 +1,7 @@
 //React imports
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const User = props => {
   const selectedUser = props.blogsByUser.find(user => {
@@ -12,7 +13,6 @@ const User = props => {
   }
 
   if(selectedUser){
-    console.log("selectedUser", selectedUser)
     let { username, blogsList } = selectedUser
 
     return (
@@ -22,7 +22,7 @@ const User = props => {
           console.log("blog", blog)
           return (
             <div key={blog.id}>
-              {blog.content}
+              <Link to={`/blogs/${blog.id}`}>{blog.content}</Link>
             </div>
           )
         })}

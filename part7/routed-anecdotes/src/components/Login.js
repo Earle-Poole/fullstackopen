@@ -11,7 +11,7 @@ const LoginNoHistory = props => {
     e.preventDefault()
     const username = e.target.username.value
 
-    props.setNotification(`user ${e.target.username.value} logged in`, 10)
+    props.setNotification(`successfully logged in`, 5)
     props.loginUser(username)
     props.history.push('/')
   }
