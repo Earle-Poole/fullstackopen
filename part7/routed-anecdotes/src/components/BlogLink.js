@@ -1,11 +1,13 @@
-//React imports
+// React imports
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const BlogLink = props => {
+const BlogLink = (props) => {
+  const { user } = props
+
   return (
-    <div>
-      <Link to={`/blogs/${props.user.id}`}>{props.user.content}</Link>
+    <div className="list-group-item">
+      <Link to={`/blogs/${user.id}`}>{user.content}</Link>
     </div>
   )
 }

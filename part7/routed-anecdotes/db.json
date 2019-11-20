@@ -1,50 +1,68 @@
-{ "initialBlogs": [
-  { 
-    "username": "Earle Poole",
-    "blogsList": [
-      {
-        "comments": [],
-        "content": "Nullam consectetur suscipit tortor, feugiat.",
-        "id":94475441,
-        "votes":0
-      },{
-        "comments": [],
-        "content": "Vestibulum volutpat nisl et nibh.",
-        "id": 67998410,
-        "votes": 0
-      },{
-        "comments": [],
-        "content": "Donec placerat ex sit amet.",
-        "id":80539126,
-        "votes":0
+{
+  "blogs": [
+    {
+      "username": "Earle Poole",
+      "blogsList": {
+        "0": {
+          "comments": {
+            "0": "This is another test",
+            "1": "Does this work?"
+          },
+          "content": "Nullam consectetur suscipit tortor, feugiat.",
+          "id": 94475441,
+          "votes": 0,
+          "userID": 25342430
+        },
+        "1": {
+          "comments": {},
+          "content": "Vestibulum volutpat nisl et nibh.",
+          "id": 67998410,
+          "votes": 0,
+          "userID": 25342430
+        },
+        "2": {
+          "comments": {},
+          "content": "Donec placerat ex sit amet.",
+          "id": 80539126,
+          "votes": 0,
+          "userID": 25342430
         }
-    ],
-    "id":25342430
-  },{
-    "username": "Not Earle Poole",
-    "blogsList": [
-      {
-        "comments": [],
-        "content": "Curabitur euismod accumsan nibh, eu.",
-        "id": 18452282,
-        "votes": 0
-      },{
-        "comments": [],
-        "content": "Donec tincidunt nibh in venenatis.",
-        "id": 98525233,
-        "votes": 0
-      },{
-        "comments": [],
-        "content": "Interdum et malesuada fames ac.",
-        "id": 74068050,
-        "votes":0
-      },{
-        "comments": [],
-        "content": "Cras laoreet, diam in finibus.",
-        "id": 59492574,
-        "votes": 0
-      }
-    ],
-    "id": 91767583
-  }
-]}
+      },
+      "id": 25342430
+    },
+    {
+      "username": "Not Earle Poole",
+      "blogsList": {
+        "0": {
+          "comments": {},
+          "content": "Curabitur euismod accumsan nibh, eu.",
+          "id": 18452282,
+          "votes": 0,
+          "userID": 91767583
+        },
+        "1": {
+          "comments": {},
+          "content": "Donec tincidunt nibh in venenatis.",
+          "id": 98525233,
+          "votes": 0,
+          "userID": 91767583
+        },
+        "2": {
+          "comments": {},
+          "content": "Interdum et malesuada fames ac.",
+          "id": 74068050,
+          "votes": 0,
+          "userID": 91767583
+        },
+        "3": {
+          "comments": {},
+          "content": "Cras laoreet, diam in finibus.",
+          "id": 59492574,
+          "votes": 0,
+          "userID": 91767583
+        }
+      },
+      "id": 91767583
+    }
+  ]
+}

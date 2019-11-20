@@ -1,56 +1,84 @@
-import blogsService from "../services/blogs"
-import { generateID } from "../utils/tools"
+/* eslint-disable no-case-declarations */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-restricted-syntax */
+import blogsService from '../services/blogs'
+import { generateID } from '../utils/tools'
 
-export const initializeBlogs = () => {
-  return async dispatch => {
-    const initialBlogs = await blogsService.getAll()
+export const initializeBlogs = () => async (dispatch) => {
+  const initialBlogs = await blogsService.getAll()
+  const blogVals = Object.values(initialBlogs)
 
-    initialBlogs.map(user => {
-      user.blogsList.map(blog => {
-        blog.userID = user.id
-        return null
-      })
-      return null
-    })
+  blogVals.map((user) => {
+    for (const blog of Object.keys(user.blogsList)) {
+      user.blogsList[blog].userID = user.id
+    }
+    return null
+  })
 
-    dispatch({
-      type: "INIT_BLOGS",
-      data: initialBlogs
-    })
-  }
+  dispatch({
+    type: 'INIT_BLOGS',
+    data: blogVals,
+  })
 }
 
-export const voteBlog = IDObj => {
-  return async dispatch => {
-    // const blog = await blogsService.voteByBlogID(id)
+export const commentOnBlog = (blogID, comment, blogsByUser) => async (dispatch) => {
+  const selectedBlog = blogsByUser.map((user) => Object.values(user.blogsList).find((blog) => blog.id === blogID))
+    .filter((user) => {
+      if (user === undefined) {
+        return false
+      }
+      return true
+    })[0]
 
-    dispatch({
-      type: "VOTE_BLOG",
-      IDObj: IDObj,
+  const selectedUser = blogsByUser.find((user) => user.id === selectedBlog.userID)
+
+  const selectedUserIndex = Object.values(selectedUser.blogsList).findIndex((blog) => blog.id === blogID)
+
+  const selectedBlogsCommentLength = Object.values(Object.values(selectedUser.blogsList)[selectedUserIndex].comments).length
+
+  selectedUser.blogsList[selectedUserIndex].comments[selectedBlogsCommentLength] = comment
+
+  const blogsByUserWithAddedComment = blogsByUser.map((user) => {
+    Object.values(user.blogsList).find((blog) => {
+      if (blog.id === blogID) {
+        user.blogsList = selectedUser.blogsList
+      }
+      return true
     })
-  }
+    return user
+  })
+
+  const res = await blogsService.addCommentToBlog(blogsByUserWithAddedComment)
+
+  dispatch({
+    type: 'COMMENT_BLOG',
+    data: res,
+  })
 }
 
-export const newBlog = blog => {
-  return async dispatch => {
-    dispatch({
-      type: "NEW_BLOG",
-      blog,
-    })
-  }
+export const voteBlog = (IDObj) => async (dispatch) => {
+  dispatch({
+    type: 'VOTE_BLOG',
+    IDObj,
+  })
+}
+
+export const newBlog = (blog) => async (dispatch) => {
+  dispatch({
+    type: 'NEW_BLOG',
+    blog,
+  })
 }
 
 const blogReducer = (state = [], action) => {
   let newState = [...state]
 
   switch (action.type) {
-    case "INIT_BLOGS":
+    case 'INIT_BLOGS':
       newState = action.data
       return newState
-    case "NEW_BLOG":
-      const matchingUser = newState.findIndex(user => {
-        return user.username === action.blog.username
-      })
+    case 'NEW_BLOG':
+      const matchingUser = newState.findIndex((user) => user.username === action.blog.username)
 
       if (matchingUser === -1) {
         const newUserAndBlog = {
@@ -62,25 +90,19 @@ const blogReducer = (state = [], action) => {
         return [...newState, newUserAndBlog]
       }
 
-      const newBlog = {
+      const createdBlog = {
         content: action.blog.blogContent,
         id: action.blog.id,
       }
 
-      newState[matchingUser].blogsList.push(newBlog)
+      newState[matchingUser].blogsList.push(createdBlog)
 
       return newState
 
-    case "VOTE_BLOG":
-      console.log("newState in VOTE_BLOG", newState)
-      console.log("action in VOTE_BLOG", action.IDObj)
-      const votedUser = newState.findIndex(user => {
-        return user.id === action.IDObj.userID
-      })
+    case 'VOTE_BLOG':
+      const votedUser = newState.findIndex((user) => user.id === action.IDObj.userID)
 
-      const votedBlog = newState[votedUser].blogsList.findIndex(blog => {
-        return blog.id === action.IDObj.blogID
-      })
+      const votedBlog = Object.values(newState[votedUser].blogsList).findIndex((blog) => blog.id === action.IDObj.blogID)
 
       newState[votedUser].blogsList[votedBlog].votes += 1
 

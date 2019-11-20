@@ -5,42 +5,36 @@ const initialNotification = {
     padding: 10,
     borderWidth: 1,
     display: 'none',
-  }
+  },
 }
 
-export const setNotification = (message, timeout) => {
-  return async dispatch => {
-    const seconds = timeout * 1000
-    dispatch(displayNotification(message))
-    setTimeout(() => dispatch(hideNotification()), seconds)
-  }
-}
+const displayNotification = (message) => ({
+  type: 'SHOW_NOTIFICATION',
+  message,
+})
 
-const displayNotification = message => {
-  return { 
-    type: 'SHOW_NOTIFICATION',
-    message: message,
-   }
-}
+const hideNotification = () => ({
+  type: 'HIDE_NOTIFICATION',
+})
 
-const hideNotification = () => {
-  return {
-    type: 'HIDE_NOTIFICATION'
-  }
+export const setNotification = (message, timeout) => async (dispatch) => {
+  const seconds = timeout * 1000
+  dispatch(displayNotification(message))
+  setTimeout(() => dispatch(hideNotification()), seconds)
 }
 
 const notificationReducer = (state = initialNotification, action) => {
   let newState
 
-  switch ( action.type ) {
+  switch (action.type) {
     case 'SHOW_NOTIFICATION':
-      newState = { 
-        ...state, 
-        message: action.message, 
-        style: { 
-          ...state.style, 
-          display: ''
-        }
+      newState = {
+        ...state,
+        message: action.message,
+        style: {
+          ...state.style,
+          display: '',
+        },
       }
       return newState
     case 'HIDE_NOTIFICATION':
@@ -48,8 +42,8 @@ const notificationReducer = (state = initialNotification, action) => {
         ...state,
         style: {
           ...state.style,
-          display: 'none'
-        }
+          display: 'none',
+        },
       }
       return newState
     default:

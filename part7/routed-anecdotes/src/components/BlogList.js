@@ -1,41 +1,42 @@
-//React imports
+/* eslint-disable no-restricted-syntax */
+// React imports
 import React from 'react'
 import { connect } from 'react-redux'
-//Reducers
+// Reducers
 import { setNotification } from '../reducers/notificationReducer'
-//Disconnected components
+// Disconnected components
 import BlogLink from './BlogLink'
 
-const BlogList = props => { 
-  const users = props.blogsByUser
+const BlogList = (props) => {
+  const { blogsByUser } = props
+  const users = blogsByUser
   const fullBlogList = []
 
-  users.map(user => user.blogsList.map(blog => fullBlogList.push(blog)))
+  users.map((user) => {
+    for (const blog of Object.keys(user.blogsList)) {
+      fullBlogList.push(user.blogsList[blog])
+    }
+    return null
+  })
 
   const blogListPadding = {
-    paddingBottom: 15
+    paddingBottom: 15,
   }
 
   return (
-    <div style={blogListPadding}>
-      {fullBlogList.map(user => {
-        return (
-          <BlogLink user={user} key={user.id} />
-        )
-      })}
+    <div style={blogListPadding} className="list-group">
+      {fullBlogList.map((user) => <BlogLink user={user} key={user.id} />)}
     </div>
   )
 }
 
-const mapStateToProps = state => {
-  return { 
-    blogsByUser: state.blogsByUser,
-  }
-}
+const mapStateToProps = (state) => ({
+  blogsByUser: state.blogsByUser,
+})
 
-const mapDispatchToProps = { 
+const mapDispatchToProps = {
   // voteBlog,
-  setNotification
+  setNotification,
 }
 
 const ConnectedBlogList = connect(mapStateToProps, mapDispatchToProps)(BlogList)

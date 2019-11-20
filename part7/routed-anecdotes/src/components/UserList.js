@@ -1,31 +1,30 @@
-//React imports
-import React from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router-dom"
+// React imports
+import React from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-const UserList = props => {
+const UserList = (props) => {
   const { blogs } = props
 
-  const userListPadding = {
-    paddingBottom: "20px",
+  const userListStyling = {
+    paddingBottom: '20px',
+    width: '400px',
   }
 
-  const usersBlogsCountTable = blogs.map(blog => {
-    return (
-      <tr key={blog.id}>
-        <td><Link to={`/users/${blog.id}`}>{blog.username}</Link></td>
-        <td>{blog.blogsList.length}</td>
-      </tr>
-    )
-  })
+  const usersBlogsCountTable = blogs.map((blog) => (
+    <tr key={blog.id}>
+      <td><Link to={`/users/${blog.id}`}><h5>{blog.username}</h5></Link></td>
+      <td><h5>{Object.values(blog.blogsList).length}</h5></td>
+    </tr>
+  ))
 
   return (
-    <div style={userListPadding}>
+    <div style={userListStyling} className="list-group">
       <table>
         <tbody>
           <tr>
-            <th></th>
-            <th>blogs created</th>
+            <th aria-label="blog count table" />
+            <th><h4>blogs created</h4></th>
           </tr>
           {usersBlogsCountTable}
         </tbody>
@@ -34,12 +33,9 @@ const UserList = props => {
   )
 }
 
-const mapStateToProps = state => {
-  console.log("state in UserList", state)
-  return {
-    blogs: state.blogsByUser,
-  }
-}
+const mapStateToProps = (state) => ({
+  blogs: state.blogsByUser,
+})
 
 const ConnectedUserList = connect(mapStateToProps)(UserList)
 
