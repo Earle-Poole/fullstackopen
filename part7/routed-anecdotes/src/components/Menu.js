@@ -35,14 +35,14 @@ const Menu = (props) => {
           : null
       }
       <nav className="my-2 my-md-0 mr-md-3">
-        <Link to="./" style={linkPadding} className="p-2 text-dark">blogs</Link>
-        <Link to="./users" style={linkPadding} className="p-2 text-dark">users</Link>
-        <Link to="./create" style={linkPadding} className="p-2 text-dark">create blog</Link>
-        <Link to="./about" style={linkPadding} className="p-2 text-dark">about</Link>
+        <Link to="/" style={linkPadding} className="p-2 text-dark">blogs</Link>
+        <Link to="/users" style={linkPadding} className="p-2 text-dark">users</Link>
+        <Link to="/create" style={linkPadding} className="p-2 text-dark">create blog</Link>
+        <Link to="/about" style={linkPadding} className="p-2 text-dark">about</Link>
         {
           Object.keys(loggedUser).length === 0
-            ? <Link to="./login" style={linkPadding} className="p-2 btn btn-outline-primary">login</Link>
-            : <Link to="./" style={linkPadding} onClick={logoutCurrentUser} className="p-2 btn btn-outline-primary">logout</Link>
+            ? <Link to="/login" style={linkPadding} className="p-2 btn btn-outline-primary">login</Link>
+            : <Link to="/" style={linkPadding} onClick={logoutCurrentUser} className="p-2 btn btn-outline-primary">logout</Link>
         }
       </nav>
     </div>
