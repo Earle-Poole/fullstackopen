@@ -1,35 +1,28 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-
-import ApolloClient, { gql } from 'apollo-boost'
-
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
-})
+import { Query, ApolloConsumer } from 'react-apollo'
+import { gql } from 'apollo-boost'
+import Authors from './components/Authors'
 
 const query = gql`
 {
-  allPersons  {
+  allAuthors  {
     name,
-    phone,
-    address {
-      street,
-      city
-    }
-    id
+    bookCount,
+    born
   }
 }
 `
 
-client.query({ query })
-  .then((response) => {
-    console.log(response.data)
-  })
-
 const App = () => {
-  return <div>
-    test
-  </div>
+  return (
+    <ApolloConsumer>
+      {(client => 
+        <Query query={query}>
+          {(result) => <Authors result={result} client={client} />}
+        </Query>
+      )}
+    </ApolloConsumer>
+  )
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+export default App
