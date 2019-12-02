@@ -1,4 +1,5 @@
 import React from 'react'
+import Author from './Author'
 import { gql } from 'apollo-boost'
 
 
@@ -21,10 +22,8 @@ const Authors = ({ result }) => {
   return (
     <div>
       <h2>Authors</h2>
-      {authors.map(p =>
-        <div key={p.name}>
-          {p.name} {p.bookCount} {p.born}
-        </div>
+      {authors.map(a =>
+        <Author info={a} />
       )}
     </div>
   )
